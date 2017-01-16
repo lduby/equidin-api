@@ -13,7 +13,9 @@ class ProfilesController < ApplicationController
   end
 
   def create
-    @profile = Profile.new(profile_params)
+  	puts "Creating profile with "+params["profile"].inspect
+    #@profile = Profile.new(profile_params)
+    @profile = Profile.new(allowed_params)
 
     if @profile.save
       render json: @profile, status: :created 
@@ -42,5 +44,9 @@ class ProfilesController < ApplicationController
 
   def profile_params
     ActiveModelSerializers::Deserialization.jsonapi_parse(params)
+  end
+
+  def allowed_params
+  	params.require("profile").permit(:id, :name, :phone, :address, :about, :picture, :riding_level, :user_id)
   end
 end
