@@ -18,9 +18,9 @@ class ProfilesController < ApplicationController
     @profile = Profile.new(allowed_params)
 
     if @profile.save
-      render json: @profile, status: :created 
+      render_create_success(@profile)
     else
-      render_error(@profile, :unprocessable_entity)
+      render_create_error(@profile)
     end
   end
 
@@ -28,9 +28,9 @@ class ProfilesController < ApplicationController
     @profile = Profile.find(params[:id])
 
     if @profile.update_attributes(profile_params)
-      render json: @profile, status: :ok
+      render_update_success(@profile)
     else
-      render_error(@profile, :unprocessable_entity)
+      render_update_error(@profile)
     end
   end
 
@@ -38,6 +38,42 @@ class ProfilesController < ApplicationController
   #  @profile.destroy
   #  head 204
   #end
+
+  protected
+
+  def render_create_success(resource)
+    render json: {
+      status: 'success',
+      data:   resource, 
+      message: 'Profile created'
+    }
+  end
+
+  def render_update_success(resource)
+    render json: {
+      status: 'success',
+      data:   resource, 
+      message: 'Profile updated'
+    }
+  end
+
+  def render_create_error(resource)
+  	render_error(resource, :unprocessable_entity, 'Profile not created: check the form.')
+    # render json: {
+    #   status: :unprocessable_entity,
+    #   data:   resource, 
+    #   message: 'Profile not created: check the form.'
+    # }
+  end
+
+  def render_update_error(resource)
+  	render_error(resource, :unprocessable_entity, 'Profile not updated: check the form.')
+    # render json: {
+    #   status: :unprocessable_entity,
+    #   data:   resource, 
+    #   message: 'Profile not updated: check the form.'
+    # }
+  end
 
 
   private
